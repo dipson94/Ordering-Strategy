@@ -5,15 +5,19 @@ from math import sqrt
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-n = int(input("enter sample size "))
-mean = int(input("enter mean "))
-deviation_percent = float(input("Enter % deviation: "))
-replenishment=int(input("enter the size of replenishment "))
+from tabulate import tabulate
+import warnings
+warnings.filterwarnings('ignore')
+n = int(input("\nenter sample size : "))
+mean = int(input("enter mean : "))
+deviation_percent = float(input("Enter % deviation : "))
+replenishment=int(input("enter the size of replenishment : "))
 std = int(mean * (deviation_percent / 100))
-L=[int(input("enter Lead time 1 "))]
-L.append(int(input("enter Lead time 2 ")))
-alpha=[float(input("enter % service rate 1 "))/100]
-alpha.append(float(input("enter % service rate 2 "))/100)
+L=[int(input("enter Lead time 1 : "))]
+L.append(int(input("enter Lead time 2 : ")))
+alpha=[float(input("enter % service rate 1 : "))/100]
+alpha.append(float(input("enter % service rate 2 : "))/100)
+print("\n")
 zalpha=[norm.ppf(alpha[0])]
 zalpha.append(norm.ppf(alpha[1]))
 sqrtL=[sqrt(L[0])]
@@ -89,34 +93,35 @@ for i in range(0,4):
 
 results=pd.DataFrame(result,columns=["α","Zα","L","√L","Safety Stock","Reorder Point","Maximum Inventory"])
 cx=np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],order_size[0]),axis=1)
-c1=pd.DataFrame(np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],order_size[0]),axis=1),index=day,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
-c2=pd.DataFrame(np.stack((day,initial_stock[1],np.array(Demand[1]),final_stock[1],order_size[1]),axis=1),index=day,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
-c3=pd.DataFrame(np.stack((day,initial_stock[2],np.array(Demand[2]),final_stock[2],order_size[2]),axis=1),index=day,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
-c4=pd.DataFrame(np.stack((day,initial_stock[3],np.array(Demand[3]),final_stock[3],order_size[3]),axis=1),index=day,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
-workbook = load_workbook(filename='Order.xlsx')
-df=[results,c1,c2,c3,c4]
-sheets=["Overview","Condition1","Condition2","Condition3","Condition4"]
-
-for i in range(0,5):
-    worksheet = workbook[sheets[i]]
+c1=pd.DataFrame(np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],order_size[0]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
+c2=pd.DataFrame(np.stack((day,initial_stock[1],np.array(Demand[1]),final_stock[1],order_size[1]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
+c3=pd.DataFrame(np.stack((day,initial_stock[2],np.array(Demand[2]),final_stock[2],order_size[2]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
+c4=pd.DataFrame(np.stack((day,initial_stock[3],np.array(Demand[3]),final_stock[3],order_size[3]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
+writer = pd.ExcelWriter('Order.xlsx', engine='openpyxl')
+workbook = writer.book
+df=[results,pd.merge(c1, c2, on='Day').merge(c3, on='Day').merge(c4, on='Day')]
+if "Order_Strategy" not in workbook.sheetnames:
+    workbook.create_sheet("Order_Strategy")
+if "Conditions" not in workbook.sheetnames:
+    workbook.create_sheet("Conditions")    
+sheets=["Order_Strategy","Conditions"]
+for i in range(0,2):
+    worksheet=workbook[sheets[i]]
     for row in worksheet.iter_rows():
         for cell in row:
             cell.value = None 
+    df[i].to_excel(writer, sheet_name=sheets[i], startrow=0, startcol=0, header=True, index=False)
+    writer.save()
 
-    for r in dataframe_to_rows(df[i], index=True, header=True):
-        worksheet.append(r)
-
-workbook.save('Order.xlsx')
 print("\nResults ..........\n")
-print(results)
-print("\nCondition 1 ..........\n")
-print(c1)
-print("\nCondition 2 ..........\n")
-print(c2)
-print("\nCondition 3 ..........\n")
-print(c3)
-print("\nCondition 4 ..........\n")
-print(c4)
+print(tabulate(results.values.tolist(), headers=results.columns, tablefmt='grid',stralign='left'))
+
+
+print("\n\n\nCondition 1 ..........\t\t\t\t\t\tCondition 2 ..........\n")
+print(tabulate(pd.merge(c1, c2, on='Day').values.tolist(), headers=pd.merge(c1, c2, on='Day').columns, tablefmt='grid',stralign='left'))
+print("\n\n\nCondition 2 ..........\t\t\t\t\t\tCondition 3 ..........\n")
+print(tabulate(pd.merge(c3, c4, on='Day').values.tolist(), headers=pd.merge(c3, c4, on='Day').columns, tablefmt='grid',stralign='left'))
+
 plt.hist(Demand[0],bins=n,label='Condition 1')
 plt.hist(Demand[1],bins=n,label='Condition 2')
 plt.hist(Demand[2],bins=n,label='Condition 3')
