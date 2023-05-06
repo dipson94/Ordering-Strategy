@@ -7,6 +7,7 @@ from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from tabulate import tabulate
 import warnings
+number_of_replenishments=[]
 warnings.filterwarnings('ignore')
 n = int(input("\nenter sample size : "))
 mean = int(input("enter mean : "))
@@ -65,15 +66,18 @@ def random_nums(n,mean,std):
 for x in range (0,4):
     Demand.append(random_nums(int(n),int(mean),int(std)))
     initial_stock[x][0]=int(replenishment)
+    number=0
     for i in range(0,n):
         final_stock[x][i]=int(initial_stock[x][i]-Demand[x][i])
         if (final_stock[x][i]<reorder_point[x] or final_stock[x][i]==reorder_point[x]) and i!=n-1:
             initial_stock[x][i+1]=int(final_stock[x][i]+replenishment)
             order_size[x][i]=int(replenishment)
+            number=number+1
         elif i!=n-1:
             initial_stock[x][i+1]=int(final_stock[x][i])
+    number_of_replenishments.append(number)
     maximum_inventory.append(np.max(initial_stock[x]))
-result=[[0 for _ in range(0,7)] for _ in range(0,4)]
+result=[[0 for _ in range(0,8)] for _ in range(0,4)]
 for i in range(0,4):
     if i%2==0:
         result[i][0]="{:.3f}".format(alpha[0])
@@ -90,8 +94,9 @@ for i in range(0,4):
     result[i][4]=int(safety_stock[i])
     result[i][5]=int(reorder_point[i])
     result[i][6]=int(np.max(initial_stock[i]))
+    result[i][7]=int(number_of_replenishments[i])
 
-results=pd.DataFrame(result,columns=["α","Zα","L","√L","Safety Stock","Reorder Point","Maximum Inventory"])
+results=pd.DataFrame(result,columns=["α","Zα","L","√L","Safety Stock","Reorder Point","Maximum Inventory","Times of replenishments"])
 cx=np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],order_size[0]),axis=1)
 c1=pd.DataFrame(np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],order_size[0]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
 c2=pd.DataFrame(np.stack((day,initial_stock[1],np.array(Demand[1]),final_stock[1],order_size[1]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
