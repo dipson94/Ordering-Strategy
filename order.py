@@ -3,10 +3,11 @@ import numpy as np
 from scipy.stats import norm
 from math import sqrt
 import pandas as pd
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from tabulate import tabulate
 import warnings
+import os
 number_of_replenishments=[]
 warnings.filterwarnings('ignore')
 n = int(input("\nenter sample size : "))
@@ -102,6 +103,12 @@ c1=pd.DataFrame(np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0
 c2=pd.DataFrame(np.stack((day,initial_stock[1],np.array(Demand[1]),final_stock[1],order_size[1]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
 c3=pd.DataFrame(np.stack((day,initial_stock[2],np.array(Demand[2]),final_stock[2],order_size[2]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
 c4=pd.DataFrame(np.stack((day,initial_stock[3],np.array(Demand[3]),final_stock[3],order_size[3]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Order size"])
+filename = 'Order.xlsx'
+
+if not os.path.exists(filename):
+    workbook = Workbook()
+    sheet = workbook.active
+    workbook.save(filename)
 writer = pd.ExcelWriter('Order.xlsx', engine='openpyxl')
 workbook = writer.book
 df=[results,pd.merge(c1, c2, on='Day').merge(c3, on='Day').merge(c4, on='Day')]
