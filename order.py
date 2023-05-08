@@ -27,6 +27,7 @@ sqrtL.append(sqrt(L[1]))
 safety_stock=[]
 reorder_point=[]
 Demand=[]
+
 initial_stock=[[0 for _ in range(0,n)] for _ in range(0,4)]
 final_stock=[[0 for _ in range(0,n)] for _ in range(0,4)]
 day=[x for x in range(1,n+1)]
@@ -68,14 +69,29 @@ for x in range (0,4):
     Demand.append(random_nums(int(n),int(mean),int(std)))
     initial_stock[x][0]=int(replenishment)
     number=0
+    pos=0
+    mark =True
     for i in range(0,n):
+        if i==pos and i!=0:
+            initial_stock[x][i]=int(final_stock[x][i-1]+replenishment)
+            mark=True
         final_stock[x][i]=int(initial_stock[x][i]-Demand[x][i])
-        if (final_stock[x][i]<reorder_point[x] or final_stock[x][i]==reorder_point[x]) and i!=n-1:
-            initial_stock[x][i+1]=int(final_stock[x][i]+replenishment)
-            order_size[x][i]=int(replenishment)
-            number=number+1
+        if (final_stock[x][i]<reorder_point[x] or final_stock[x][i]==reorder_point[x]) and i!=n-1 and mark==True:
+            if x<2 and i<(n-1-L[0]):
+                pos=i+L[0]+1
+                order_size[x][i]=int(replenishment)
+                number=number+1
+                initial_stock[x][i+1]=int(final_stock[x][i])
+                mark=False
+            elif x>1 and i<(n-1-L[1]):
+                pos=i+L[1]+1
+                order_size[x][i]=int(replenishment)
+                number=number+1
+                initial_stock[x][i+1]=int(final_stock[x][i])
+                mark=False
         elif i!=n-1:
             initial_stock[x][i+1]=int(final_stock[x][i])
+        
     number_of_replenishments.append(number)
     maximum_inventory.append(np.max(initial_stock[x]))
 result=[[0 for _ in range(0,8)] for _ in range(0,4)]
@@ -129,9 +145,10 @@ print("\nResults ..........\n")
 print(tabulate(results.values.tolist(), headers=results.columns, tablefmt='grid',stralign='left'))
 
 
+
 print("\n\n\nCondition 1 ..........\t\t\t\t\t\tCondition 2 ..........\n")
 print(tabulate(pd.merge(c1, c2, on='Day').values.tolist(), headers=pd.merge(c1, c2, on='Day').columns, tablefmt='grid',stralign='left'))
-print("\n\n\nCondition 2 ..........\t\t\t\t\t\tCondition 3 ..........\n")
+print("\n\n\nCondition 3 ..........\t\t\t\t\t\tCondition 4 ..........\n")
 print(tabulate(pd.merge(c3, c4, on='Day').values.tolist(), headers=pd.merge(c3, c4, on='Day').columns, tablefmt='grid',stralign='left'))
 
 plt.hist(Demand[0],bins=n,label='Condition 1')
