@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ordering strategy</title>
+</head>
+<body>
+    <style>
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+      
+        td {
+          text-align: center;
+          vertical-align: middle;
+        }
+      </style>
+    <center>
+    <table>
+        <tr>
+            <td>
+    <h2>Inputs</h2>
+    <form method="POST">
+        <table >  
+        <tr><td  >
+        <label for="sample size">sample size</label></td>
+        <td><input type="number" name="n" id="n" size="5" required></td>
+        </tr><tr><td>
+            <label for="enter mean">mean</label>
+        </td>
+        <td><input type="number" name="mean" id="mean" size="5"required></td>
+        </tr>
+        <tr><td><label for="% deviation">% deviation</label>
+        </td><td><input type="number" name="deviation_percent" id="deviation_percent" size="5" required></td>
+    </tr>
+        <tr>
+            <td><label for="size of replenishment ">size of replenishment</label></td>
+            <td><input type="number" name="replenishment" id="replenishment" size="5"required></td>
+        </tr>
+        <tr>
+            <td><label for="Lead time 1">Lead time 1 </label></td>
+            <td><input type="number" name="l1" id="l1" size="5"required></td>
+        </tr>
+        <tr>
+            <td><label for="Lead time 2">Lead time 2</label></td>
+            <td><input type="number" name="l2" id="l2"size="5" required></td>
+        </tr>
+        <tr>
+            <td><label for="% service rate 1 ">% service rate 1</label></td>
+            <td><input type="number" name="a1"step="any" id="a1" size="5"required></td>
+        </tr>
+        <tr>
+            <td><label for="% service rate 2">% service rate 2</label></td>
+            <td><input type="number" name="a2"step="any" id="a2" size="5"required></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Generate"></td>
+            <td></td>
+            
+        </tr>
+
+        
+        </table>
+    </form>
+</Td>
+<td >
+
+    {% if table %}
+        <h2>Results:</h2>
+        {{ table|safe }}
+    {% endif %}
+</td>
+<td>
+    {% if plot_url %}
+    
+    <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+{% endif %}
+</td>
+    </tr>
+</table>
+<table>
+
+    <tr>
+        <td width="50%">
+            {% if case1 %}
+            <h2>case 1 </h2>
+            {{ case1|safe }}
+            {% endif %}
+        </td>
+        <td>
+            {% if case2 %}
+            <h2>case 2 </h2>
+            {{ case2|safe }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td width="50%">
+            {% if case3 %}
+            <h2>case 3 </h2>
+            {{ case3|safe }}
+            {% endif %}
+        </td>
+        <td>
+            {% if case4 %}
+            <h2>case 4 </h2>
+            {{ case4|safe }}
+            {% endif %}
+        </td>
+    </tr>
+</table></center>
+</body>
+</html>
