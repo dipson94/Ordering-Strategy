@@ -21,6 +21,8 @@ The outputs are displayed in the terminal and subsequently their copies were sav
 
 Finally a graphical visualization of four demands as plots shown.
 
+Alternatively use app.py for GUI in html.
+
 
 **Dependent Libraries :**
 
@@ -31,6 +33,9 @@ Finally a graphical visualization of four demands as plots shown.
 * pandas
 * openpyxl
 * tabulate
+* base64
+* io
+* flask
 
 **Author :**
 
