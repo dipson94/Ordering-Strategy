@@ -10,9 +10,11 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 import warnings
 import os
 
-warnings.filterwarnings('ignore')
+
 
 def calculate(n,mean,std,replenishment,L,alpha):
+
+    warnings.filterwarnings('ignore')
 
     #----------------------------------------Calculation Starts------------------------------------------
     
@@ -148,16 +150,15 @@ def calculate(n,mean,std,replenishment,L,alpha):
 
 
     #-------------------------------------Saving to Order.xlsx file---------------------------------------
-
     filename = 'Order.xlsx'
-
     if not os.path.exists(filename):
         workbook = Workbook()
         sheet = workbook.active
         workbook.save(filename)
+        
     writer = pd.ExcelWriter('Order.xlsx', engine='openpyxl')
     workbook = writer.book
-    df=[results,pd.merge(c1, c2, on='Day').merge(c3, on='Day').merge(c4, on='Day')]
+    df=[results,pd.merge(c1.rename(columns={"Initial stock":"Initial stock 1","Demand":"Demand 1","Final Stock":"Final Stock 1","Stock outs":"Stock outs 1","Final Stock After Replenishment":"Final Stock After Replenishment 1","Order size":"Order size 1"}), c2.rename(columns={"Initial stock":"Initial stock 2","Demand":"Demand 2","Final Stock":"Final Stock 2","Stock outs":"Stock outs 2","Final Stock After Replenishment":"Final Stock After Replenishment 2","Order size":"Order size 2"}), on='Day').merge(c3.rename(columns={"Initial stock":"Initial stock 3","Demand":"Demand 3","Final Stock":"Final Stock 3","Stock outs":"Stock outs 3","Final Stock After Replenishment":"Final Stock After Replenishment 3","Order size":"Order size 3"}), on='Day').merge(c4.rename(columns={"Initial stock":"Initial stock 4","Demand":"Demand 4","Final Stock":"Final Stock 4","Stock outs":"Stock outs 4","Final Stock After Replenishment":"Final Stock After Replenishment 4","Order size":"Order size 4"}), on='Day')]
     if "Order_Strategy" not in workbook.sheetnames:
         workbook.create_sheet("Order_Strategy")
     if "Conditions" not in workbook.sheetnames:
@@ -169,7 +170,7 @@ def calculate(n,mean,std,replenishment,L,alpha):
             for cell in row:
                 cell.value = None 
         df[i].to_excel(writer, sheet_name=sheets[i], startrow=0, startcol=0, header=True, index=False)
-        writer.save()
+        writer.book.save(filename)
     
     return results,c1,c2,c3,c4,Demand
 
