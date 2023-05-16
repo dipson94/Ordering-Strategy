@@ -1,3 +1,5 @@
+#-----------------------------------------------START-------------------------------------------------
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
@@ -10,6 +12,9 @@ import warnings
 import os
 
 warnings.filterwarnings('ignore')
+
+#------------------------------------------Getting Inputs--------------------------------------------
+
 n = int(input("\nenter sample size : "))
 mean = int(input("enter mean : "))
 deviation_percent = float(input("Enter % deviation : "))
@@ -20,11 +25,13 @@ L.append(int(input("enter Lead time 2 : ")))
 alpha=[float(input("enter % service rate 1 : "))/100]
 alpha.append(float(input("enter % service rate 2 : "))/100)
 print("\n")
+
+#----------------------------------------Calculation Starts------------------------------------------
+
 zalpha=[norm.ppf(alpha[0])]
 zalpha.append(norm.ppf(alpha[1]))
 sqrtL=[sqrt(L[0])]
 sqrtL.append(sqrt(L[1]))
-
 safety_stock=[]
 reorder_point=[]
 Demand=[]
@@ -40,6 +47,9 @@ for i in range(0,2):
     for j in range(0,2):
         safety_stock.append(zalpha[j]*sqrtL[i]*std)
         reorder_point.append((sqrtL[i]*sqrtL[i]*mean)+safety_stock[-1])
+
+
+#-------------------------------------Random Number Generation ---------------------------------------
 
 def random_nums(n,mean,std):  
     i=0
@@ -71,6 +81,8 @@ def random_nums(n,mean,std):
 de=random_nums(int(n),int(mean),int(std))
 stock_outs=[["" for _ in range(0,n)] for _ in range(0,4)]
 number_of_stockouts=[]
+
+#--------------------------------------Generating Order tables----------------------------------------
 
 for x in range (0,4):
     Demand.append(de)
@@ -112,6 +124,9 @@ for x in range (0,4):
     number_of_replenishments.append(number)
     number_of_stockouts.append(stnu)
     maximum_inventory.append(np.max(initial_stock[x]))
+
+#-----------------------------------------Overview Results-------------------------------------------
+
 result=[[0 for _ in range(0,9)] for _ in range(0,4)]
 for i in range(0,4):
     if i%2==0:
@@ -132,6 +147,8 @@ for i in range(0,4):
     result[i][7]=int(number_of_replenishments[i])
     result[i][8]=int(number_of_stockouts[i])
 
+#--------------------------------------------Dataframes----------------------------------------------
+
 results=pd.DataFrame(result,columns=["α","Zα","L","√L","Safety Stock","Reorder Point","Max Inventory","Replenishments","Stock outs"])
 cx=np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock_after_replenishment[0],order_size[0]),axis=1)
 c1=pd.DataFrame(np.stack((day,initial_stock[0],np.array(Demand[0]),final_stock[0],stock_outs[0],final_stock_after_replenishment[0],order_size[0]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Stock outs","Final Stock After Replenishment","Order size"])
@@ -139,6 +156,9 @@ c2=pd.DataFrame(np.stack((day,initial_stock[1],np.array(Demand[1]),final_stock[1
 c3=pd.DataFrame(np.stack((day,initial_stock[2],np.array(Demand[2]),final_stock[2],stock_outs[2],final_stock_after_replenishment[2],order_size[2]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Stock outs","Final Stock After Replenishment","Order size"])
 c4=pd.DataFrame(np.stack((day,initial_stock[3],np.array(Demand[3]),final_stock[3],stock_outs[3],final_stock_after_replenishment[3],order_size[3]),axis=1),index=None,columns=["Day","Initial stock","Demand","Final Stock","Stock outs","Final Stock After Replenishment","Order size"])
 filename = 'Order.xlsx'
+
+
+#-------------------------------------Saving to Order.xlsx file---------------------------------------
 
 if not os.path.exists(filename):
     workbook = Workbook()
@@ -160,11 +180,10 @@ for i in range(0,2):
     df[i].to_excel(writer, sheet_name=sheets[i], startrow=0, startcol=0, header=True, index=False)
     writer.save()
 
+#-----------------------------------------Printing Results-------------------------------------------
+
 print("\n ......................................................Results.....................................................\n")
 print(tabulate(results.values.tolist(), headers=results.columns, tablefmt='grid',stralign='left'))
-
-
-
 print("\n\n\n.....................................................Condition 1 ......................................................\n")
 print(tabulate(c1.values.tolist(), headers=c1.columns, tablefmt='grid',stralign='left'))
 print("\n\n\n.....................................................Condition 2 ......................................................\n")
@@ -173,9 +192,14 @@ print("\n\n\n.....................................................Condition 3 ..
 print(tabulate(c3.values.tolist(), headers=c3.columns, tablefmt='grid',stralign='left'))
 print("\n\n\n.....................................................Condition 4 ......................................................\n")
 print(tabulate(c4.values.tolist(), headers=c4.columns, tablefmt='grid',stralign='left'))
+
+#--------------------------------------Plotting the Histogram----------------------------------------
+
 plt.hist(Demand[0],bins=n)
 plt.title("Demand Distribution")
 plt.xlabel('Demand')
 plt.ylabel('Frequency')
 plt.savefig('distribution.png')
 plt.show()
+
+#------------------------------------------------END--------------------------------------------------
