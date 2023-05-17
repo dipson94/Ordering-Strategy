@@ -38,14 +38,14 @@ def index():
             i=0
             b=True
             while(i<len(val)):
-                if val[i]=="<" and val[i+1]=="t" and val[i+2]=="r": 
+                if val[i:i+3]=="<tr": 
                     if b==True:
                         color="#EEEEEE"
                         b=False 
                     else:
                         color="#FFFFFF"
                         b=True                  
-                    temp=temp+"<tr"+" "+'style="background-color:'+color+'"'+" "
+                    temp=temp+"<tr"+" "+'style="background-color:'+color+'"'
                     i=i+3             
                 else:
                     temp=temp+val[i]
