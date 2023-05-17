@@ -24,8 +24,8 @@ Alternatively use app.py for GUI in html.
 
 screenshot of server-based GUI.
 
+![](assets/20230517_180155_image.png)
 
-![](assets/20230517_163314_image.png)
 
 **Dependent Libraries :**
 

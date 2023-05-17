@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import orderstrat
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -32,13 +33,35 @@ def index():
         plot_url = base64.b64encode(plot_img.getvalue()).decode()
 
         plt.close() 
+        def color_alternating_rows(val):
+            temp=""
+            i=0
+            b=True
+            while(i<len(val)):
+                if val[i]=="<" and val[i+1]=="t" and val[i+2]=="r": 
+                    if b==True:
+                        color="#EEEEEE"
+                        b=False 
+                    else:
+                        color="#FFFFFF"
+                        b=True                  
+                    temp=temp+"<tr"+" "+'style="background-color:'+color+'"'+" "
+                    i=i+3             
+                else:
+                    temp=temp+val[i]
+                    i=i+1
+            return temp
+
+           
+
 
         # Render the DataFrame as an HTML table
-        table = results.to_html(index=False)
-        case1=c1.to_html(index=False)
-        case2=c2.to_html(index=False)
-        case3=c3.to_html(index=False)
-        case4=c4.to_html(index=False)
+        table = color_alternating_rows(results.to_html(index=False))
+        case1= color_alternating_rows(c1.to_html(index=False))
+        case2=color_alternating_rows(c2.to_html(index=False))
+        case3=color_alternating_rows(c3.to_html(index=False))
+        case4=color_alternating_rows(c4.to_html(index=False))
+        
         return render_template('index.html', table=table, case1=case1, case2=case2, case3=case3, case4=case4,plot_url=plot_url)
     
     return render_template('index.html')
