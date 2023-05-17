@@ -1,4 +1,3 @@
-
 **Purpose :**
 
 Finding reorder level, safety stock, generate demand and visualize the results for two different service level and lead times.
@@ -23,6 +22,10 @@ Finally a graphical visualization of four demands as plots shown.
 
 Alternatively use app.py for GUI in html.
 
+screenshot of server-based GUI.
+
+
+![](assets/20230517_163314_image.png)
 
 **Dependent Libraries :**
 
@@ -39,4 +42,4 @@ Alternatively use app.py for GUI in html.
 
 **Author :**
 
-    Dipson
+Dipson

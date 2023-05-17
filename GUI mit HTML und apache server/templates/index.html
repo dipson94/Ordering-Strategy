@@ -11,20 +11,22 @@
         }
       
         td {
-          text-align: center;
+          
           vertical-align: middle;
         }
       </style>
-    <center>
+      <center>
+    <h1>Ordering strategy</h1><br></center>
     <table>
         <tr>
-            <td>
+            <td width="16%"  align="center">
     <h2>Inputs</h2>
+
     <form method="POST">
-        <table >  
-        <tr><td  >
-        <label for="sample size">sample size</label></td>
-        <td><input type="number" name="n" id="n" size="5" required></td>
+        <table width="100%">  
+        <tr><td>
+        <label for="sample size" >sample size</label></td>
+        <td ><input type="number" name="n" id="n" size="5" required></td>
         </tr><tr><td>
             <label for="enter mean">mean</label>
         </td>
@@ -62,15 +64,16 @@
         
         </table>
     </form>
+    <center>
 </Td>
-<td >
+<td  align="center" >
 
     {% if table %}
         <h2>Results:</h2>
         {{ table|safe }}
     {% endif %}
 </td>
-<td>
+<td  align="center">
     {% if plot_url %}
     
     <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
@@ -80,14 +83,14 @@
 </table>
 <table>
 
-    <tr>
+    <tr align="center">
         <td width="50%">
             {% if case1 %}
             <h2>case 1 </h2>
             {{ case1|safe }}
             {% endif %}
         </td>
-        <td>
+        <td  align="center">
             {% if case2 %}
             <h2>case 2 </h2>
             {{ case2|safe }}
@@ -95,13 +98,13 @@
         </td>
     </tr>
     <tr>
-        <td width="50%">
+        <td width="50%"  align="center">
             {% if case3 %}
             <h2>case 3 </h2>
             {{ case3|safe }}
             {% endif %}
         </td>
-        <td>
+        <td  align="center">
             {% if case4 %}
             <h2>case 4 </h2>
             {{ case4|safe }}
